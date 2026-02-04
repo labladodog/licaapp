@@ -1201,7 +1201,7 @@
 
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                         <div style="font-size: 13px; color: #666;" id="cardIncomeDate">01-29收益(元)</div>
-                        <div style="font-size: 15px; font-weight: 500; color: #ff3b30;">+0.01</div>
+                        <div id="cardDailyIncome" style="font-size: 15px; font-weight: 500; color: #ff3b30;">+0.01</div>
                     </div>
 
                     <div style="font-size: 12px; color: #999; margin-top: 10px; padding-top: 10px; border-top: 0.5px solid #f0f0f0;">
@@ -1304,11 +1304,11 @@
                 incomeDateEl.textContent = `${month}月${day}日收益(元)`;
             }
             
-            // 更新持仓卡片收益日期（昨天的月-日格式）
+            // 更新持仓卡片收益日期（当天的月-日格式）
             const cardIncomeDateEl = document.getElementById('cardIncomeDate');
             if (cardIncomeDateEl) {
-                const month = String(yesterday.getMonth() + 1).padStart(2, '0');
-                const day = String(yesterday.getDate()).padStart(2, '0');
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
                 cardIncomeDateEl.textContent = `${month}-${day}收益(元)`;
             }
         }
@@ -1317,12 +1317,15 @@
         function updateAmounts() {
             const days = getDaysSinceStart();
             const dailyIncome = 20;
-            const totalIncome = days * dailyIncome;
+            const baseIncome = 420; // 2026.2.4的初始收益
+            const totalIncome = baseIncome + (days * dailyIncome);
             const holdingIncome = totalIncome;
-            const baseAmount = 100420;
-            const totalAmount = baseAmount + totalIncome;
+            
+            // 总金额：2026.2.4为100420，之后每天增加20
+            const baseTotalAmount = 100420;
+            const totalAmount = baseTotalAmount + (days * dailyIncome);
 
-            // 持仓页面 - 总金额 (100000 + 累计收益)
+            // 持仓页面 - 总金额 (2026.2.4为100420，每天+20)
             const totalAmountEl = document.getElementById('totalAmount');
             if (totalAmountEl) {
                 totalAmountEl.textContent = totalAmount.toFixed(2);
@@ -1334,30 +1337,35 @@
                 yesterdayIncomeEl.textContent = '+' + dailyIncome.toFixed(2);
             }
             
-            // 持仓页面 - 持有收益 (累计收益)
+            // 持仓页面 - 持有收益 (420 + 累计增长)
             const holdingIncomeEl = document.getElementById('holdingIncome');
             if (holdingIncomeEl) {
                 holdingIncomeEl.textContent = '+' + holdingIncome.toFixed(2);
             }
             
-            // 持仓页面 - 累计收益
+            // 持仓页面 - 累计收益 (420 + 累计增长)
             const totalIncomeEl = document.getElementById('totalIncome');
             if (totalIncomeEl) {
                 totalIncomeEl.textContent = '+' + totalIncome.toFixed(2);
             }
 
-            // 持仓卡片 - 持有金额 (100 + 累计收益)
-            const cardBaseAmount = 100;
-            const cardTotalAmount = cardBaseAmount + totalIncome;
+            // 持仓卡片 - 持有金额 (固定100000)
+            const cardBaseAmount = 100000;
             const holdingAmountEl = document.getElementById('holdingAmount');
             if (holdingAmountEl) {
-                holdingAmountEl.textContent = cardTotalAmount.toFixed(2);
+                holdingAmountEl.textContent = cardBaseAmount.toFixed(2);
             }
             
-            // 持仓卡片 - 持有收益
+            // 持仓卡片 - 持有收益 (420 + 累计增长)
             const cardHoldingIncomeEl = document.getElementById('cardHoldingIncome');
             if (cardHoldingIncomeEl) {
                 cardHoldingIncomeEl.textContent = '+' + holdingIncome.toFixed(2);
+            }
+            
+            // 持仓卡片 - 日期收益 (固定20元)
+            const cardDailyIncomeEl = document.getElementById('cardDailyIncome');
+            if (cardDailyIncomeEl) {
+                cardDailyIncomeEl.textContent = '+' + dailyIncome.toFixed(2);
             }
         }
 
